@@ -52,7 +52,7 @@
         </rowConstraints>
          <children>
             <ColorPicker fx:id="colorInput" prefHeight="84.0" prefWidth="200.0" GridPane.columnIndex="2" />
-            <CheckBox mnemonicParsing="false" prefHeight="56.0" prefWidth="200.0" text="Filled" GridPane.columnIndex="1" />
+            <CheckBox mnemonicParsing="false" onAction="#onSetFilled" prefHeight="56.0" prefWidth="200.0" text="Filled" GridPane.columnIndex="1" />
          </children>
       </GridPane>
    </bottom>

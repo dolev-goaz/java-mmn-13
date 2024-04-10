@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
@@ -39,6 +40,7 @@ public class PaintController {
 
     private double x1, y1, x2, y2;
     private boolean isDragging;
+    private boolean isFilled;
 
     public void initialize() {
         isDragging = false;
@@ -96,9 +98,7 @@ public class PaintController {
                 return;
         }
 
-        // TODO: distinguish between filled and not filled
-        shape.setStroke(this.color);
-        shape.setFill(this.color);
+        setColor(shape);
 
         drawingPane.getChildren().add(shape);
     }
@@ -124,6 +124,16 @@ public class PaintController {
         return new Line(x1, y1, x2, y2);
     }
 
+    private void setColor(Shape shape) {
+        if (this.isFilled) {
+            shape.setFill(this.color);
+            shape.setStroke(Color.TRANSPARENT);
+        } else {
+            shape.setFill(Color.TRANSPARENT);
+            shape.setStroke(this.color);
+        }
+    }
+
     @FXML
     private void onBeginDrag(MouseEvent event) {
         isDragging = true;
@@ -146,5 +156,11 @@ public class PaintController {
             return;
         }
         shapes.remove(shapes.size() - 1);
+    }
+
+    @FXML
+    void onSetFilled(ActionEvent event) {
+        CheckBox src = (CheckBox)event.getTarget();
+        this.isFilled = src.isSelected();
     }
 }
