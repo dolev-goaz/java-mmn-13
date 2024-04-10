@@ -5,10 +5,14 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 public class PaintController {
+
+    @FXML
+    private Pane drawingPane;
 
     @FXML
     private RadioButton circleRadioButton;
@@ -25,12 +29,12 @@ public class PaintController {
     @FXML
     private ColorPicker colorInput;
 
-    private static final Shape INITIAL_SHAPE = Shape.RECTANGLE;
+    private static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE;
     private static final Color INITIAL_COLOR = Color.BLACK;
-    private Shape selectedShape;
+    private PaneShape selectedShape;
     private Color color;
 
-    private double x1, y1;
+    private double x1, y1, x2, y2;
     private boolean isDragging;
 
     public void initialize() {
@@ -48,15 +52,15 @@ public class PaintController {
 
     private void initializeShapes() {
         // NOTE: ensure we set the user data of all radio buttons here
-        circleRadioButton.setUserData(Shape.CIRCLE);
-        lineRadioButton.setUserData(Shape.LINE);
-        rectangleRadioButton.setUserData(Shape.RECTANGLE);
+        circleRadioButton.setUserData(PaneShape.CIRCLE);
+        lineRadioButton.setUserData(PaneShape.LINE);
+        rectangleRadioButton.setUserData(PaneShape.RECTANGLE);
 
         shapeToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
-            this.selectedShape = (Shape)newValue.getUserData();
+            this.selectedShape = (PaneShape)newValue.getUserData();
         });
 
         switch (INITIAL_SHAPE){
@@ -73,9 +77,44 @@ public class PaintController {
 
     }
 
-    private void drawShape(double x2, double y2) {
-        System.out.println(String.format("Drawing a %s %s from %f, %f to %f, %f", this.color, this.selectedShape.name(), this.x1, this.y1,
-                x2, y2));
+    private void drawShape() {
+        Shape shape;
+        switch (this.selectedShape) {
+            case RECTANGLE:
+                shape = createRectangle();
+                break;
+            case CIRCLE:
+                shape = createEllipse();
+                break;
+            case LINE:
+                shape = createLine();
+                break;
+            default:
+                return;
+        }
+
+        drawingPane.getChildren().add(shape);
+    }
+
+    private Rectangle createRectangle() {
+        double rectX = Math.min(x1, x2);
+        double rectY = Math.min(y1, y2);
+        double height = Math.abs(y2 - y1);
+        double width = Math.abs(x2 - x1);
+        return new Rectangle(rectX, rectY, width, height);
+    }
+
+    private Ellipse createEllipse() {
+        double centerX = (x1 + x2) / 2;
+        double centerY = (y1 + y2) / 2;
+
+        double rad1 = centerX - Math.min(x1, x2);
+        double rad2 = centerY- Math.min(y1, y2);
+        return new Ellipse(centerX, centerY, rad1, rad2);
+    }
+
+    private Line createLine() {
+        return new Line(x1, y1, x2, y2);
     }
 
     @FXML
@@ -88,6 +127,8 @@ public class PaintController {
     @FXML
     void onEndDrag(MouseEvent event) {
         isDragging = false;
-        drawShape(event.getX(), event.getY());
+        x2 = event.getX();
+        y2 = event.getY();
+        drawShape();
     }
 }

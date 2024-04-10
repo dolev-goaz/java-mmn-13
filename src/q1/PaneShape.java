@@ -1,6 +1,6 @@
 package q1;
 
-public enum Shape {
+public enum PaneShape {
     CIRCLE,
     LINE,
     RECTANGLE

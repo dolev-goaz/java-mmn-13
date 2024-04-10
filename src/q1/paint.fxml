@@ -38,7 +38,7 @@
       </GridPane>
    </left>
    <center>
-      <Pane onMousePressed="#onBeginDrag" onMouseReleased="#onEndDrag" prefHeight="200.0" prefWidth="200.0" style="-fx-border-width: 1; -fx-border-color: lightgray;" BorderPane.alignment="CENTER" />
+      <Pane fx:id="drawingPane" onMousePressed="#onBeginDrag" onMouseReleased="#onEndDrag" prefHeight="200.0" prefWidth="200.0" style="-fx-border-width: 1; -fx-border-color: lightgray;" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
       <GridPane alignment="CENTER" prefHeight="56.0" prefWidth="600.0" BorderPane.alignment="CENTER">
