@@ -39,11 +39,14 @@ public class PaintController {
     private Color color;
 
     private double x1, y1, x2, y2;
-    private boolean isDragging;
     private boolean isFilled;
+
+    private boolean isDragging;
+    private boolean beganDrawingShape;
 
     public void initialize() {
         isDragging = false;
+        beganDrawingShape = false;
         initializeShapes();
         initializeColorInput();
     }
@@ -134,6 +137,14 @@ public class PaintController {
         }
     }
 
+    private void removeLastShape() {
+        ObservableList<Node> shapes = drawingPane.getChildren();
+        if (shapes.size() == 0) {
+            return;
+        }
+        shapes.remove(shapes.size() - 1);
+    }
+
     @FXML
     private void onBeginDrag(MouseEvent event) {
         isDragging = true;
@@ -142,20 +153,29 @@ public class PaintController {
     }
 
     @FXML
-    private void onEndDrag(MouseEvent event) {
-        isDragging = false;
+    void onDrag(MouseEvent event) {
+        if (!this.isDragging) {
+            return;
+        }
+        if (beganDrawingShape) {
+            removeLastShape();
+        } else {
+            beganDrawingShape = true;
+        }
         x2 = event.getX();
         y2 = event.getY();
         drawShape();
     }
 
     @FXML
+    private void onEndDrag(MouseEvent event) {
+        isDragging = false;
+        beganDrawingShape = false;
+    }
+
+    @FXML
     private void onUndoShape(ActionEvent event) {
-        ObservableList<Node> shapes = drawingPane.getChildren();
-        if (shapes.size() == 0) {
-            return;
-        }
-        shapes.remove(shapes.size() - 1);
+        removeLastShape();
     }
 
     @FXML
