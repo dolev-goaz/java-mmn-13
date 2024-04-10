@@ -179,6 +179,11 @@ public class PaintController {
     }
 
     @FXML
+    void onClear(ActionEvent event) {
+        drawingPane.getChildren().clear();
+    }
+
+    @FXML
     void onSetFilled(ActionEvent event) {
         CheckBox src = (CheckBox)event.getTarget();
         this.isFilled = src.isSelected();
