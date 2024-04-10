@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class PaintController {
@@ -65,5 +66,15 @@ public class PaintController {
                 break;
         }
 
+    }
+
+    @FXML
+    void onBeginDrag(MouseEvent event) {
+        System.out.println(1);
+    }
+
+    @FXML
+    void onEndDrag(MouseEvent event) {
+        System.out.println(2);
     }
 }
