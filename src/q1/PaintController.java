@@ -131,6 +131,17 @@ public class PaintController {
     }
 
     private void setStyle(Shape shape) {
+        setColor(shape);
+        shape.setStrokeWidth(STROKE_WIDTH);
+    }
+
+    private void setColor(Shape shape) {
+        // line is not effected by fill so it's always stroke
+        if (this.selectedShape == PaneShape.LINE) {
+            shape.setStroke(this.color);
+            return;
+        }
+
         if (this.isFilled) {
             shape.setFill(this.color);
             shape.setStroke(Color.TRANSPARENT);
@@ -138,7 +149,6 @@ public class PaintController {
             shape.setFill(Color.TRANSPARENT);
             shape.setStroke(this.color);
         }
-        shape.setStrokeWidth(STROKE_WIDTH);
     }
 
     private void removeLastShape() {
