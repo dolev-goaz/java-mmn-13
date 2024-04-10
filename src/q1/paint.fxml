@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="q1.PaintController">
    <left>
       <GridPane prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -27,13 +26,13 @@
             <RowConstraints maxHeight="229.0" minHeight="10.0" prefHeight="81.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <RadioButton mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Line" GridPane.rowIndex="1">
+            <RadioButton fx:id="lineRadioButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Line" GridPane.rowIndex="1">
                <toggleGroup>
-                  <ToggleGroup fx:id="shape" />
+                  <ToggleGroup fx:id="shapeToggleGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton mnemonicParsing="false" prefHeight="95.0" prefWidth="164.0" text="Circle" toggleGroup="$shape" GridPane.rowIndex="2" />
-            <RadioButton mnemonicParsing="false" prefHeight="79.0" prefWidth="113.0" text="Rectangle" toggleGroup="$shape" GridPane.rowIndex="3" />
+            <RadioButton fx:id="circleRadioButton" mnemonicParsing="false" prefHeight="95.0" prefWidth="164.0" text="Circle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="2" />
+            <RadioButton fx:id="rectangleRadioButton" mnemonicParsing="false" prefHeight="79.0" prefWidth="113.0" text="Rectangle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="3" />
             <Button mnemonicParsing="false" prefHeight="90.0" prefWidth="105.0" text="UNDO" GridPane.rowIndex="5" />
          </children>
       </GridPane>
@@ -52,7 +51,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ColorPicker prefHeight="84.0" prefWidth="200.0" GridPane.columnIndex="2" />
+            <ColorPicker fx:id="colorInput" prefHeight="84.0" prefWidth="200.0" GridPane.columnIndex="2" />
             <CheckBox mnemonicParsing="false" prefHeight="56.0" prefWidth="200.0" text="Filled" GridPane.columnIndex="1" />
          </children>
       </GridPane>
