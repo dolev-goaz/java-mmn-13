@@ -3,6 +3,7 @@ package q1;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
@@ -38,7 +39,7 @@ public class PaintController {
     private PaneShape selectedShape;
     private Color color;
 
-    private double x1, y1, x2, y2;
+    private Point2D source, target;
     private boolean isFilled;
 
     private boolean isDragging;
@@ -107,24 +108,24 @@ public class PaintController {
     }
 
     private Rectangle createRectangle() {
-        double rectX = Math.min(x1, x2);
-        double rectY = Math.min(y1, y2);
-        double height = Math.abs(y2 - y1);
-        double width = Math.abs(x2 - x1);
+        double rectX = Math.min(source.getX(), target.getX());
+        double rectY = Math.min(source.getY(), target.getY());
+        double height = Math.abs(source.getY() - target.getY());
+        double width = Math.abs(source.getX() - target.getX());
+
         return new Rectangle(rectX, rectY, width, height);
     }
 
     private Ellipse createEllipse() {
-        double centerX = (x1 + x2) / 2;
-        double centerY = (y1 + y2) / 2;
+        Point2D center = source.midpoint(target);
+        double rad1 = center.getX() - Math.min(source.getX(), target.getX());
+        double rad2 = center.getY() - Math.min(source.getY(), target.getY());
 
-        double rad1 = centerX - Math.min(x1, x2);
-        double rad2 = centerY- Math.min(y1, y2);
-        return new Ellipse(centerX, centerY, rad1, rad2);
+        return new Ellipse(center.getX(), center.getY(), rad1, rad2);
     }
 
     private Line createLine() {
-        return new Line(x1, y1, x2, y2);
+        return new Line(source.getX(), source.getY(), target.getX(), target.getY());
     }
 
     private void setColor(Shape shape) {
@@ -148,8 +149,7 @@ public class PaintController {
     @FXML
     private void onBeginDrag(MouseEvent event) {
         isDragging = true;
-        x1 = event.getX();
-        y1 = event.getY();
+        source = new Point2D(event.getX(), event.getY());
     }
 
     @FXML
@@ -162,8 +162,7 @@ public class PaintController {
         } else {
             beganDrawingShape = true;
         }
-        x2 = event.getX();
-        y2 = event.getY();
+        target = new Point2D(event.getX(), event.getY());
         drawShape();
     }
 
