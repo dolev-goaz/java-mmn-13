@@ -15,6 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 public class PaintController {
+    private static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE;
+    private static final Color INITIAL_COLOR = Color.BLACK;
+    private static final double STROKE_WIDTH = 2;
+    private static final double DRAW_OFFSET = STROKE_WIDTH / 2;
 
     @FXML
     private Pane drawingPane;
@@ -34,8 +38,6 @@ public class PaintController {
     @FXML
     private ColorPicker colorInput;
 
-    private static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE;
-    private static final Color INITIAL_COLOR = Color.BLACK;
     private PaneShape selectedShape;
     private Color color;
 
@@ -102,7 +104,7 @@ public class PaintController {
                 return;
         }
 
-        setColor(shape);
+        setStyle(shape);
 
         drawingPane.getChildren().add(shape);
     }
@@ -128,7 +130,7 @@ public class PaintController {
         return new Line(source.getX(), source.getY(), target.getX(), target.getY());
     }
 
-    private void setColor(Shape shape) {
+    private void setStyle(Shape shape) {
         if (this.isFilled) {
             shape.setFill(this.color);
             shape.setStroke(Color.TRANSPARENT);
@@ -136,6 +138,7 @@ public class PaintController {
             shape.setFill(Color.TRANSPARENT);
             shape.setStroke(this.color);
         }
+        shape.setStrokeWidth(STROKE_WIDTH);
     }
 
     private void removeLastShape() {
@@ -146,10 +149,19 @@ public class PaintController {
         shapes.remove(shapes.size() - 1);
     }
 
+    private Point2D clampPoint(double x, double y) {
+        double newX = clamp(x, 0 + DRAW_OFFSET, drawingPane.getWidth() - DRAW_OFFSET);
+        double newY = clamp(y, 0 + DRAW_OFFSET, drawingPane.getHeight() - DRAW_OFFSET);
+        return new Point2D(newX, newY);
+    }
+    private double clamp(double val, double min, double max) {
+        return Math.max(min, Math.min(max, val));
+    }
+
     @FXML
     private void onBeginDrag(MouseEvent event) {
         isDragging = true;
-        source = new Point2D(event.getX(), event.getY());
+        source = clampPoint(event.getX(), event.getY());
     }
 
     @FXML
@@ -162,7 +174,7 @@ public class PaintController {
         } else {
             beganDrawingShape = true;
         }
-        target = new Point2D(event.getX(), event.getY());
+        target = clampPoint(event.getX(), event.getY());
         drawShape();
     }
 
