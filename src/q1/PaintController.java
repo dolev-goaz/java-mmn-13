@@ -6,6 +6,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
 
 public class PaintController {
 
@@ -29,7 +30,11 @@ public class PaintController {
     private Shape selectedShape;
     private Color color;
 
+    private double x1, y1;
+    private boolean isDragging;
+
     public void initialize() {
+        isDragging = false;
         initializeShapes();
         initializeColorInput();
     }
@@ -68,13 +73,21 @@ public class PaintController {
 
     }
 
+    private void drawShape(double x2, double y2) {
+        System.out.println(String.format("Drawing a %s %s from %f, %f to %f, %f", this.color, this.selectedShape.name(), this.x1, this.y1,
+                x2, y2));
+    }
+
     @FXML
     void onBeginDrag(MouseEvent event) {
-        System.out.println(1);
+        isDragging = true;
+        x1 = event.getX();
+        y1 = event.getY();
     }
 
     @FXML
     void onEndDrag(MouseEvent event) {
-        System.out.println(2);
+        isDragging = false;
+        drawShape(event.getX(), event.getY());
     }
 }
