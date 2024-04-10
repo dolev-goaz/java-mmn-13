@@ -1,6 +1,9 @@
 package q1;
 
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
@@ -122,17 +125,26 @@ public class PaintController {
     }
 
     @FXML
-    void onBeginDrag(MouseEvent event) {
+    private void onBeginDrag(MouseEvent event) {
         isDragging = true;
         x1 = event.getX();
         y1 = event.getY();
     }
 
     @FXML
-    void onEndDrag(MouseEvent event) {
+    private void onEndDrag(MouseEvent event) {
         isDragging = false;
         x2 = event.getX();
         y2 = event.getY();
         drawShape();
+    }
+
+    @FXML
+    private void onUndoShape(ActionEvent event) {
+        ObservableList<Node> shapes = drawingPane.getChildren();
+        if (shapes.size() == 0) {
+            return;
+        }
+        shapes.remove(shapes.size() - 1);
     }
 }

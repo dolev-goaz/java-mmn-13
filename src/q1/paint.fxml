@@ -33,7 +33,7 @@
             </RadioButton>
             <RadioButton fx:id="circleRadioButton" mnemonicParsing="false" prefHeight="95.0" prefWidth="164.0" text="Circle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="2" />
             <RadioButton fx:id="rectangleRadioButton" mnemonicParsing="false" prefHeight="79.0" prefWidth="113.0" text="Rectangle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="3" />
-            <Button mnemonicParsing="false" prefHeight="90.0" prefWidth="105.0" text="UNDO" GridPane.rowIndex="5" />
+            <Button mnemonicParsing="false" onAction="#onUndoShape" prefHeight="90.0" prefWidth="105.0" text="UNDO" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </left>
