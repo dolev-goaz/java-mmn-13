@@ -93,6 +93,10 @@ public class PaintController {
                 return;
         }
 
+        // TODO: distinguish between filled and not filled
+        shape.setStroke(this.color);
+        shape.setFill(this.color);
+
         drawingPane.getChildren().add(shape);
     }
 
