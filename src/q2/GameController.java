@@ -1,5 +1,6 @@
 package q2;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
@@ -47,7 +48,14 @@ public class GameController {
             b.setMaxWidth(Double.MAX_VALUE);
             b.setMaxHeight(Double.MAX_VALUE);
             gameGrid.add(b, i, ROW_COUNT);
+            b.setOnAction(event ->
+                    onButtonPress((Button)event.getTarget())
+            );
         }
+    }
+
+    private void onButtonPress(Button source) {
+        System.out.println(source.getText());
     }
 
 }
