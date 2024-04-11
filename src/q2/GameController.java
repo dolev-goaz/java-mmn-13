@@ -18,6 +18,7 @@ public class GameController {
     private static final int ROW_COUNT = 6;
     private static final int SQUARE_SIZE = 50;
     private static final double DISC_RADIUS = SQUARE_SIZE / 2.25;
+    private static final double DISC_INNER_RADIUS = DISC_RADIUS - SQUARE_SIZE / 7.0;
     private static final double SQUARE_CENTER = SQUARE_SIZE / 2.0;
     private static final Color PLAYER_ONE_COLOR = Color.CORNFLOWERBLUE;
     private static final Color PLAYER_TWO_COLOR = Color.MEDIUMVIOLETRED;
@@ -101,6 +102,8 @@ public class GameController {
 
         Circle circle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_RADIUS, currentColor);
         this.gameGrid.add(circle, colIndex, rowIndex);
+        Circle innerCircle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_INNER_RADIUS, currentColor.brighter());
+        this.gameGrid.add(innerCircle, colIndex, rowIndex);
     }
 
     private void handleGameOver(GameStatus gameStatus) {
