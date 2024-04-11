@@ -15,6 +15,8 @@ public class GameController {
     private static final int SQUARE_SIZE = 50;
     private static final double DISC_RADIUS = SQUARE_SIZE / 2.25;
     private static final double SQUARE_CENTER = SQUARE_SIZE / 2.0;
+    private static final Color PLAYER_ONE_COLOR = Color.CORNFLOWERBLUE;
+    private static final Color PLAYER_TWO_COLOR = Color.MEDIUMVIOLETRED;
 
     private FourInARow game;
 
@@ -85,8 +87,8 @@ public class GameController {
     private void placeDisc(int player, int colIndex, int rowIndex) {
         Color currentColor =
                 player == FourInARow.PLAYER_ONE
-                        ? Color.BLUE
-                        : Color.RED;
+                        ? PLAYER_ONE_COLOR
+                        : PLAYER_TWO_COLOR;
 
         Circle circle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_RADIUS, currentColor);
         this.gameGrid.add(circle, colIndex, rowIndex);
