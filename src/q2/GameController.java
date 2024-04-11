@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 
 public class GameController {
     private static final int COLUMN_COUNT = 7;
-    private static final int ROW_COUNT = 6;
+    private static final int ROW_COUNT = 8;
 
     @FXML
     private GridPane gameGrid;
@@ -27,20 +27,26 @@ public class GameController {
         gameGrid.setPrefWidth(gameContainer.getPrefWidth());
         gameGrid.setMaxWidth(gameContainer.getPrefWidth());
         gameGrid.setGridLinesVisible(true);
+        gameGrid.setMaxWidth(Double.MAX_VALUE);
         for (int i = 0; i < COLUMN_COUNT; i++) {
-            gameGrid.addColumn(i);
+            ColumnConstraints constraints = new ColumnConstraints();
+            constraints.setPercentWidth(100.0 / COLUMN_COUNT);
+            gameGrid.getColumnConstraints().add(constraints);
         }
         // +1 for button row
-        for (int i = 0; i < ROW_COUNT + 1; i++) {
-            gameGrid.addRow(i);
+        for (int i = 0; i < ROW_COUNT; i++) {
+            RowConstraints row = new RowConstraints();
+            row.setPercentHeight(100.0 / (ROW_COUNT + 1));
+            gameGrid.getRowConstraints().add(row);
         }
-        gameGrid.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     private void initializeButtons() {
         for (int i = 0; i < COLUMN_COUNT; i++) {
             Button b = new Button((i+1) + "");
-            gameGrid.add(b, i, ROW_COUNT - 1);
+            b.setMaxWidth(Double.MAX_VALUE);
+            b.setMaxHeight(Double.MAX_VALUE);
+            gameGrid.add(b, i, ROW_COUNT);
         }
     }
 
