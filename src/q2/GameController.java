@@ -1,34 +1,39 @@
 package q2;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.layout.*;
-
 import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
 
 public class GameController {
     private static final int COLUMN_COUNT = 7;
     private static final int ROW_COUNT = 8;
+    private static final int SQUARE_SIZE = 50;
 
     @FXML
     private GridPane gameGrid;
 
-
     @FXML
     private VBox gameContainer;
 
+    @FXML
+    private Button clearButton;
+
     public void initialize() {
+        initializeContainer();
         initializeGrid();
         initializeButtons();
     }
 
+    private void initializeContainer() {
+        gameContainer.setPrefWidth(COLUMN_COUNT * SQUARE_SIZE);
+        gameContainer.setPrefHeight(clearButton.getPrefHeight() + (ROW_COUNT + 1) * SQUARE_SIZE);
+    }
+
     private void initializeGrid() {
-        gameGrid.setPrefWidth(gameContainer.getPrefWidth());
-        gameGrid.setMaxWidth(gameContainer.getPrefWidth());
         gameGrid.setGridLinesVisible(true);
-        gameGrid.setMaxWidth(Double.MAX_VALUE);
+        gameGrid.setMinHeight((ROW_COUNT + 1) * SQUARE_SIZE);
+        gameGrid.setMinWidth(COLUMN_COUNT * SQUARE_SIZE);
+
         for (int i = 0; i < COLUMN_COUNT; i++) {
             ColumnConstraints constraints = new ColumnConstraints();
             constraints.setPercentWidth(100.0 / COLUMN_COUNT);
