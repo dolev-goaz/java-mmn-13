@@ -11,7 +11,7 @@ import javafx.scene.shape.Circle;
 
 public class GameController {
     private static final int COLUMN_COUNT = 7;
-    private static final int ROW_COUNT = 8;
+    private static final int ROW_COUNT = 6;
     private static final int SQUARE_SIZE = 50;
     private static final double DISC_RADIUS = SQUARE_SIZE / 2.25;
     private static final double SQUARE_CENTER = SQUARE_SIZE / 2.0;
