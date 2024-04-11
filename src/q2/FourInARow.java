@@ -2,8 +2,10 @@ package q2;
 
 public class FourInARow {
     private static final int EMPTY = -1;
+    private static final int NO_WINNER = 0;
     public static final int PLAYER_ONE = 1;
     public static final int PLAYER_TWO = 2;
+    public static final int CONNECT_COUNT_WIN = 4; // amount of discs in a row
 
     private final int width;
     private final int height;
@@ -64,4 +66,107 @@ public class FourInARow {
                         ? PLAYER_TWO
                         : PLAYER_ONE;
     }
+
+    public GameStatus getGameStatus() {
+        if (this.isGameOverDraw()) {
+            return GameStatus.Draw;
+        }
+        int winner = this.getWinner();
+        if (winner == NO_WINNER) {
+            return GameStatus.InProgress;
+        }
+
+        return winner == PLAYER_ONE
+                ? GameStatus.PlayerOneWin
+                : GameStatus.PlayerTwoWin;
+    }
+
+    // checks if the top row is filled(meaning the entire board is filled)
+    private boolean isGameOverDraw() {
+        for (int i = 0; i < this.width; i++) {
+            if (this.plays[i][height - 1] == EMPTY) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int getWinner() {
+        // check row
+        for (int col = 0; col <= width - CONNECT_COUNT_WIN; col++) {
+            for (int row = 0; row < height; row++) {
+                int player = plays[col][row];
+                if (player == EMPTY) {
+                    continue;
+                }
+                boolean win = true;
+                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
+                    if (plays[col + k][row] != player) {
+                        win = false;
+                        break;
+                    }
+                }
+                if (win) return player;
+
+            }
+        }
+
+        // check column
+        for (int col = 0; col < width; col++) {
+            for (int row = 0; row <= height - CONNECT_COUNT_WIN; row++) {
+                int player = plays[col][row];
+                if (player == EMPTY) {
+                    continue;
+                }
+                boolean win = true;
+                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
+                    if (plays[col][row + k] != player) {
+                        win = false;
+                        break;
+                    }
+                }
+                if (win) return player;
+            }
+        }
+
+        // check diagonal (top-left to bottom-right)
+        for (int col = 0; col <= width - CONNECT_COUNT_WIN; col++) {
+            for (int row = 0; row <= height - CONNECT_COUNT_WIN; row++) {
+                int player = plays[col][row];
+                if (player == EMPTY) {
+                    continue;
+                }
+                boolean win = true;
+                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
+                    if (plays[col + k][row + k] != player) {
+                        win = false;
+                        break;
+                    }
+                }
+                if (win) return player;
+            }
+        }
+
+        // check diagonal (top-right to bottom-left)
+        for (int col = CONNECT_COUNT_WIN - 1; col < width; col++) {
+            for (int row = 0; row <= height - CONNECT_COUNT_WIN; row++) {
+                int player = plays[col][row];
+                if (player == EMPTY) {
+                    continue;
+                }
+                boolean win = true;
+                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
+                    if (plays[col - k][row + k] != player) {
+                        win = false;
+                        break;
+                    }
+                }
+                if (win) return player;
+            }
+        }
+
+        // If none of the above conditions are met, it's a draw
+        return 0;
+    }
+
 }

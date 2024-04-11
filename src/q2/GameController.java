@@ -4,10 +4,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameController {
     private static final int COLUMN_COUNT = 7;
@@ -82,6 +86,11 @@ public class GameController {
 
         rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left
         placeDisc(currentTurn, columnIndex, rowIndex);
+
+        GameStatus gameStatus = this.game.getGameStatus();
+        if (gameStatus != GameStatus.InProgress) {
+            handleGameOver(gameStatus);
+        }
     }
 
     private void placeDisc(int player, int colIndex, int rowIndex) {
@@ -94,10 +103,28 @@ public class GameController {
         this.gameGrid.add(circle, colIndex, rowIndex);
     }
 
+    private void handleGameOver(GameStatus gameStatus) {
+        setButtonsDisable(true);
+    }
 
     @FXML
     void onClear(ActionEvent event) {
         this.gameGrid.getChildren().removeIf(node -> node instanceof Circle);
         game.reset();
+        setButtonsDisable(false);
+    }
+
+    private void setButtonsDisable(boolean disabled) {
+        for (Button btn : this.getButtons()) {
+            btn.setDisable(disabled);
+        }
+    }
+    private List<Button> getButtons() {
+        List<? extends Node> out =
+                gameGrid.getChildren()
+                        .stream()
+                        .filter(node -> node instanceof Button)
+                        .collect(Collectors.toList());
+        return (List<Button>)out;
     }
 }
