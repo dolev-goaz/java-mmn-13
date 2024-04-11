@@ -69,12 +69,7 @@ public class GameController {
 
     private void onButtonPress(Button source) {
         int currentTurn = this.game.getCurrentTurn();
-
-        Color currentColor =
-                currentTurn == FourInARow.PLAYER_ONE
-                        ? Color.BLUE
-                        : Color.RED;
-
+        
         int columnIndex = Integer.parseInt(source.getText()) - 1;
         int rowIndex = this.game.play(columnIndex);
         if (rowIndex == -1) return;
