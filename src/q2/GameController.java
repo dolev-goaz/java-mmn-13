@@ -1,5 +1,6 @@
 package q2;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.*;
 import javafx.scene.control.Button;
@@ -91,5 +92,12 @@ public class GameController {
         // TODO: figure out how to center-align this circle to allow smaller radius
         Circle circle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_RADIUS, currentColor);
         this.gameGrid.add(circle, colIndex, rowIndex);
+    }
+
+
+    @FXML
+    void onClear(ActionEvent event) {
+        this.gameGrid.getChildren().removeIf(node -> node instanceof Circle);
+        game.reset();
     }
 }

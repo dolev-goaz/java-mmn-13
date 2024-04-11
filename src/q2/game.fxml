@@ -12,6 +12,6 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <Button fx:id="clearButton" mnemonicParsing="false" prefHeight="24.0" prefWidth="75.0" text="CLEAR" />
+      <Button fx:id="clearButton" mnemonicParsing="false" onAction="#onClear" prefHeight="24.0" prefWidth="75.0" text="CLEAR" />
    </children>
 </VBox>

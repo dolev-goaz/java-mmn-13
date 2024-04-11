@@ -15,15 +15,10 @@ public class FourInARow {
     public FourInARow(int width, int height) {
         this.width = width;
         this.height = height;
-        this.currentTurn = PLAYER_ONE;
 
         this.plays = new int[width][height];
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                this.plays[i][j] = EMPTY;
-            }
-        }
+        this.reset();
     }
 
     public int play(int columnIndex) {
@@ -48,6 +43,15 @@ public class FourInARow {
         column[playedRow] = this.getCurrentTurn();
         switchPlayer();
         return playedRow;
+    }
+
+    public void reset() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                this.plays[i][j] = EMPTY;
+            }
+        }
+        this.currentTurn = PLAYER_ONE;
     }
 
     public int getCurrentTurn() {
