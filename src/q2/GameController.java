@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
@@ -108,6 +109,34 @@ public class GameController {
 
     private void handleGameOver(GameStatus gameStatus) {
         setButtonsDisable(true);
+
+        String message;
+        switch (gameStatus) {
+            case Draw:
+                message = "Game ended in a draw!";
+                break;
+            case PlayerOneWin:
+                message = "Player one won!";
+                break;
+            case PlayerTwoWin:
+                message = "Player two won!";
+                break;
+            default:
+                // should never happen
+                return;
+        }
+
+        showAlert("Game Over", message);
+
+    }
+
+    // shows an alert with the provided title and content
+    private static void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
