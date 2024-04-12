@@ -42,11 +42,13 @@ public class GameController {
         initializeButtons();
     }
 
+    // sets the width/height of the window
     private void initializeContainer() {
         gameContainer.setPrefWidth(COLUMN_COUNT * SQUARE_SIZE);
         gameContainer.setPrefHeight(clearButton.getPrefHeight() + (ROW_COUNT + 1) * SQUARE_SIZE);
     }
 
+    // sets width/height of the grid, adds rows/columns to the grid.
     private void initializeGrid() {
         gameGrid.setGridLinesVisible(true);
         gameGrid.setMinHeight((ROW_COUNT + 1) * SQUARE_SIZE);
@@ -67,6 +69,7 @@ public class GameController {
         }
     }
 
+    // creates and adds the buttons to the grid. adds event listeners to handle their press.
     private void initializeButtons() {
         for (int i = 0; i < COLUMN_COUNT; i++) {
             Button b = new Button((i+1) + "");
@@ -79,6 +82,7 @@ public class GameController {
         }
     }
 
+    // handles button press(play a turn)
     private void onButtonPress(Button source) {
         int currentTurn = this.game.getCurrentTurn();
 
@@ -94,31 +98,41 @@ public class GameController {
         rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left
         placeDisc(currentTurn, columnIndex, rowIndex);
 
-        boolean isFilled = game.isColumnFilled(columnIndex);
-        if (isFilled) {
-            this.getButton(columnIndex).setDisable(true);
-        }
+        // check game over
         GameStatus gameStatus = this.game.getGameStatus();
         if (gameStatus != GameStatus.InProgress) {
             handleGameOver(gameStatus);
+            return;
+        }
+
+        if (game.isColumnFilled(columnIndex)) {
+            // if column is filled, disable the button(don't allow extra clicks)
+            // not really necessary because it's checked in the game runner, but it's better UX
+            this.getButton(columnIndex).setDisable(true);
         }
     }
 
+    // draws the disc of the provided player in the provided coordinates
     private void placeDisc(int player, int colIndex, int rowIndex) {
         Color currentColor =
                 player == FourInARow.PLAYER_ONE
                         ? PLAYER_ONE_COLOR
                         : PLAYER_TWO_COLOR;
 
+        // outer circle(the border, basically)
         Circle circle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_RADIUS, currentColor);
         this.gameGrid.add(circle, colIndex, rowIndex);
+        // inner circle
         Circle innerCircle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_INNER_RADIUS, currentColor.brighter());
         this.gameGrid.add(innerCircle, colIndex, rowIndex);
     }
 
+    // handles the ending of the game
     private void handleGameOver(GameStatus gameStatus) {
+        // disable all buttons
         setButtonsDisable(true);
 
+        // pop up an alert with a message fitting the game status
         String message;
         switch (gameStatus) {
             case Draw:
@@ -149,17 +163,21 @@ public class GameController {
     }
 
     @FXML
+    // clear the game board, creating a new game
     void onClear(ActionEvent event) {
         this.gameGrid.getChildren().removeIf(node -> node instanceof Circle);
         game.reset();
         setButtonsDisable(false);
     }
 
+    // set the disabled state of all buttons
     private void setButtonsDisable(boolean disabled) {
         for (Button btn : this.getButtons()) {
             btn.setDisable(disabled);
         }
     }
+
+    // return all buttons
     private List<Button> getButtons() {
         List<? extends Node> out =
                 gameGrid.getChildren()
@@ -169,6 +187,7 @@ public class GameController {
         return (List<Button>)out;
     }
 
+    // returns a specific button
     private Button getButton(int index) {
         return this.getButtons().get(index);
     }
