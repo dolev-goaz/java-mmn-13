@@ -83,8 +83,13 @@ public class GameController {
         int currentTurn = this.game.getCurrentTurn();
 
         int columnIndex = Integer.parseInt(source.getText()) - 1;
-        int rowIndex = this.game.play(columnIndex);
-        if (rowIndex == -1) return;
+        int rowIndex;
+        try {
+            rowIndex = this.game.play(columnIndex);
+        } catch (FilledColumnException e) {
+            // column is already filled
+            return;
+        }
 
         rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left
         placeDisc(currentTurn, columnIndex, rowIndex);

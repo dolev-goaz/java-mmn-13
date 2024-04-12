@@ -23,14 +23,15 @@ public class FourInARow {
         this.reset();
     }
 
-    public int play(int columnIndex) {
-        if (columnIndex < 0 || columnIndex > this.width) {
-            throw new IllegalArgumentException("Invalid column " + columnIndex);
+    public int play(int columnIndex) throws FilledColumnException {
+        if ((columnIndex < 0) || (columnIndex > this.width)) {
+            // shouldn't happen in our setup
+            throw new IllegalArgumentException(String.format("Invalid column %d", columnIndex));
         }
 
         int[] column = this.plays[columnIndex];
         if (column[this.height - 1] != EMPTY) {
-            return -1;
+            throw new FilledColumnException(String.format("Column %d is already filled!", columnIndex + 1));
         }
 
         // an assignment for the compiler, no real need to assign here since the loop would always find the appropriate row
