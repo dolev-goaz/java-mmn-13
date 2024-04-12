@@ -5,10 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -17,8 +14,7 @@ import javafx.scene.shape.*;
 public class PaintController {
     private static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE; // initial selected shape
     private static final Color INITIAL_COLOR = Color.BLACK;
-    private static final double STROKE_WIDTH = 2;
-    private static final double DRAW_OFFSET = STROKE_WIDTH / 2;
+    private static final double INITIAL_STROKE_WIDTH = 2;
 
     @FXML
     private Pane drawingPane;
@@ -38,6 +34,9 @@ public class PaintController {
     @FXML
     private ColorPicker colorInput;
 
+    @FXML
+    private Slider strokeWidthSlider;
+
     private PaneShape selectedShape;
     private Color color;
 
@@ -46,12 +45,22 @@ public class PaintController {
 
     private boolean isDragging;
     private boolean beganDrawingShape;
+    private int strokeWidth;
 
     public void initialize() {
         isDragging = false;
         beganDrawingShape = false;
         initializeShapes();
         initializeColorInput();
+        initializeStrokeWidthInput();
+    }
+
+    // initializes the stroke width input component, sets default width and listens to changes
+    private void initializeStrokeWidthInput() {
+        strokeWidthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            this.strokeWidth = newValue.intValue();
+        });
+        strokeWidthSlider.valueProperty().setValue(INITIAL_STROKE_WIDTH);
     }
 
     // initializes the color input component, sets default color and listens to changes
@@ -142,7 +151,7 @@ public class PaintController {
     // sets color and stroke width
     private void setStyle(Shape shape) {
         setColor(shape);
-        shape.setStrokeWidth(STROKE_WIDTH);
+        shape.setStrokeWidth(strokeWidth);
     }
 
     // sets the color of the shape, taking fill into account
@@ -173,8 +182,9 @@ public class PaintController {
 
     // clamps point to be inside the limits of the drawing pane
     private Point2D clampPoint(double x, double y) {
-        double newX = clamp(x, 0 + DRAW_OFFSET, drawingPane.getWidth() - DRAW_OFFSET);
-        double newY = clamp(y, 0 + DRAW_OFFSET, drawingPane.getHeight() - DRAW_OFFSET);
+        double drawOffset = this.strokeWidth / 2; // account for stroke width so it wont overflow
+        double newX = clamp(x, 0 + drawOffset, drawingPane.getWidth() - drawOffset);
+        double newY = clamp(y, 0 + drawOffset, drawingPane.getHeight() - drawOffset);
         return new Point2D(newX, newY);
     }
 
