@@ -94,6 +94,10 @@ public class GameController {
         rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left
         placeDisc(currentTurn, columnIndex, rowIndex);
 
+        boolean isFilled = game.isColumnFilled(columnIndex);
+        if (isFilled) {
+            this.getButton(columnIndex).setDisable(true);
+        }
         GameStatus gameStatus = this.game.getGameStatus();
         if (gameStatus != GameStatus.InProgress) {
             handleGameOver(gameStatus);
@@ -163,5 +167,9 @@ public class GameController {
                         .filter(node -> node instanceof Button)
                         .collect(Collectors.toList());
         return (List<Button>)out;
+    }
+
+    private Button getButton(int index) {
+        return this.getButtons().get(index);
     }
 }

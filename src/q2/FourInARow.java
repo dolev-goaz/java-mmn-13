@@ -82,10 +82,15 @@ public class FourInARow {
                 : GameStatus.PlayerTwoWin;
     }
 
+    public boolean isColumnFilled(int columnIndex) {
+        return this.plays[columnIndex][height-1] != EMPTY;
+    }
+
     // checks if the top row is filled(meaning the entire board is filled)
     private boolean isGameOverDraw() {
         for (int i = 0; i < this.width; i++) {
-            if (this.plays[i][height - 1] == EMPTY) {
+            if (!this.isColumnFilled(i)) {
+                // if the column isn't filled, then the game isn't over yet(there are empty slots)
                 return false;
             }
         }
