@@ -1,20 +1,13 @@
 package q1;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
 
 public class PaintController {
-    private static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE; // initial selected shape
-    private static final Color INITIAL_COLOR = Color.BLACK;
-    private static final double INITIAL_STROKE_WIDTH = 2;
 
     @FXML
     private Pane drawingPane;
@@ -37,19 +30,10 @@ public class PaintController {
     @FXML
     private Slider strokeWidthSlider;
 
-    private PaneShape selectedShape;
-    private Color color;
-
-    private Point2D source, target;
-    private boolean isFilled;
-
-    private boolean isDragging;
-    private boolean beganDrawingShape;
-    private int strokeWidth;
+    private PaintLogic logic;
 
     public void initialize() {
-        isDragging = false;
-        beganDrawingShape = false;
+        logic = new PaintLogic(this.drawingPane);
         initializeShapes();
         initializeColorInput();
         initializeStrokeWidthInput();
@@ -58,18 +42,20 @@ public class PaintController {
     // initializes the stroke width input component, sets default width and listens to changes
     private void initializeStrokeWidthInput() {
         strokeWidthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.strokeWidth = newValue.intValue();
+            logic.setStrokeWidth(newValue.intValue());
         });
-        strokeWidthSlider.valueProperty().setValue(INITIAL_STROKE_WIDTH);
+        // set the initial value
+        strokeWidthSlider.valueProperty().setValue(logic.getStrokeWidth());
     }
 
     // initializes the color input component, sets default color and listens to changes
     private void initializeColorInput() {
         // event handler to store the selected color
         colorInput.valueProperty().addListener((observable, oldValue, newValue) -> {
-            this.color = newValue;
+            logic.setColor(newValue);
         });
-        colorInput.valueProperty().setValue(INITIAL_COLOR);
+        // set the initial value
+        colorInput.valueProperty().setValue(logic.getColor());
     }
 
     // initializes the radio group. listens to changes, and sets initial shape
@@ -85,11 +71,11 @@ public class PaintController {
             if (newValue == null) {
                 return;
             }
-            this.selectedShape = (PaneShape)newValue.getUserData();
+            logic.setShape((PaneShape)newValue.getUserData());
         });
 
         // trigger the initial radio button
-        switch (INITIAL_SHAPE){
+        switch (logic.getShape()){
             case LINE:
                 lineRadioButton.fire();
                 break;
@@ -103,144 +89,47 @@ public class PaintController {
 
     }
 
-    // draws a shape
-    private void drawShape() {
-        Shape shape;
-        switch (this.selectedShape) {
-            case RECTANGLE:
-                shape = createRectangle();
-                break;
-            case CIRCLE:
-                shape = createEllipse();
-                break;
-            case LINE:
-                shape = createLine();
-                break;
-            default:
-                return;
-        }
-
-        setStyle(shape);
-        drawingPane.getChildren().add(shape);
-    }
-
-    // creates a rectangle using the stored data
-    private Rectangle createRectangle() {
-        double rectX = Math.min(source.getX(), target.getX());
-        double rectY = Math.min(source.getY(), target.getY());
-        double height = Math.abs(source.getY() - target.getY());
-        double width = Math.abs(source.getX() - target.getX());
-
-        return new Rectangle(rectX, rectY, width, height);
-    }
-
-    // creates an ellipse using the stored data
-    private Ellipse createEllipse() {
-        Point2D center = source.midpoint(target);
-        double rad1 = center.getX() - Math.min(source.getX(), target.getX());
-        double rad2 = center.getY() - Math.min(source.getY(), target.getY());
-
-        return new Ellipse(center.getX(), center.getY(), rad1, rad2);
-    }
-
-    // creates a line using the stored data
-    private Line createLine() {
-        return new Line(source.getX(), source.getY(), target.getX(), target.getY());
-    }
-
-    // sets color and stroke width
-    private void setStyle(Shape shape) {
-        setColor(shape);
-        shape.setStrokeWidth(strokeWidth);
-    }
-
-    // sets the color of the shape, taking fill into account
-    private void setColor(Shape shape) {
-        // line is not effected by fill so it's always stroke
-        if (this.selectedShape == PaneShape.LINE) {
-            shape.setStroke(this.color);
-            return;
-        }
-
-        if (this.isFilled) {
-            shape.setFill(this.color);
-            shape.setStroke(Color.TRANSPARENT);
-        } else {
-            shape.setFill(Color.TRANSPARENT);
-            shape.setStroke(this.color);
-        }
-    }
-
-    // clears the last shape from the pane
-    private void removeLastShape() {
-        ObservableList<Node> shapes = drawingPane.getChildren();
-        if (shapes.size() == 0) {
-            return;
-        }
-        shapes.remove(shapes.size() - 1);
-    }
-
-    // clamps point to be inside the limits of the drawing pane
-    private Point2D clampPoint(double x, double y) {
-        double drawOffset = this.strokeWidth / 2; // account for stroke width so it wont overflow
-        double newX = clamp(x, 0 + drawOffset, drawingPane.getWidth() - drawOffset);
-        double newY = clamp(y, 0 + drawOffset, drawingPane.getHeight() - drawOffset);
-        return new Point2D(newX, newY);
-    }
-
-    // clamps value to be between min and max
-    private double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
-    }
+    // ---------------- events ----------------
 
     @FXML
     // event handler for the user starts dragging
     private void onBeginDrag(MouseEvent event) {
-        isDragging = true;
-        source = clampPoint(event.getX(), event.getY());
+        logic.beginShapeDrag(mouseEventToPoint(event));
     }
 
     @FXML
     // event handler for the user is currently dragging
     void onDrag(MouseEvent event) {
-        if (!this.isDragging) {
-            return;
-        }
-        // we are counting on the fact that the shape was already created once, before deleting it.
-        // that is why we have this beganDrawingShape variable. so if we haven't already created the shape, we won't
-        // remove the last shape.
-        if (beganDrawingShape) {
-            removeLastShape();
-        } else {
-            beganDrawingShape = true;
-        }
-        target = clampPoint(event.getX(), event.getY());
-        drawShape();
+        logic.onDrag(mouseEventToPoint(event));
     }
 
     @FXML
     // event handler for when the user stopped dragging
     private void onEndDrag(MouseEvent event) {
-        isDragging = false;
-        beganDrawingShape = false;
+        logic.onEndDrag();
     }
 
     @FXML
     // event handler for the 'undo' button
     private void onUndoShape(ActionEvent event) {
-        removeLastShape();
+        logic.removeLastShape();
     }
 
     @FXML
     // event handler for the 'clear' button
     void onClear(ActionEvent event) {
-        drawingPane.getChildren().clear();
+        logic.clear();
     }
 
     @FXML
     // event handler for the 'filled' checkbox
     void onSetFilled(ActionEvent event) {
-        CheckBox src = (CheckBox)event.getTarget();
-        this.isFilled = src.isSelected();
+        boolean isSelected = ((CheckBox)event.getTarget()).isSelected();
+        logic.setFilled(isSelected);
     }
+
+    private Point2D mouseEventToPoint(MouseEvent event) {
+        return new Point2D(event.getX(), event.getY());
+    }
+
 }
