@@ -82,47 +82,13 @@ public class PaintLogic {
 
     // Draw the currently selected shape(using current arguments)
     private void drawShape() {
-        Shape shape;
-        switch (this.shape) {
-            case RECTANGLE:
-                shape = createRectangle();
-                break;
-            case CIRCLE:
-                shape = createEllipse();
-                break;
-            case LINE:
-                shape = createLine();
-                break;
-            default:
-                return;
+        Shape shape = ShapeFactory.createShape(this.shape, source, target);
+        if (shape == null) {
+            return;
         }
 
         setStyle(shape);
         drawingPane.getChildren().add(shape);
-    }
-
-    // Creates a rectangle using the stored data
-    private Rectangle createRectangle() {
-        double rectX = Math.min(source.getX(), target.getX());
-        double rectY = Math.min(source.getY(), target.getY());
-        double height = Math.abs(source.getY() - target.getY());
-        double width = Math.abs(source.getX() - target.getX());
-
-        return new Rectangle(rectX, rectY, width, height);
-    }
-
-    // creates an ellipse using the stored data
-    private Ellipse createEllipse() {
-        Point2D center = source.midpoint(target);
-        double rad1 = center.getX() - Math.min(source.getX(), target.getX());
-        double rad2 = center.getY() - Math.min(source.getY(), target.getY());
-
-        return new Ellipse(center.getX(), center.getY(), rad1, rad2);
-    }
-
-    // Creates a line using the stored data
-    private Line createLine() {
-        return new Line(source.getX(), source.getY(), target.getX(), target.getY());
     }
 
     // clamps point to be inside the limits of the drawing pane
