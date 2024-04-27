@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
+// A controller the paint application
 public class PaintController {
 
     @FXML
@@ -32,6 +33,7 @@ public class PaintController {
 
     private PaintLogic logic;
 
+    // Paint setup
     public void initialize() {
         logic = new PaintLogic(this.drawingPane);
         initializeShapes();
@@ -128,6 +130,7 @@ public class PaintController {
         logic.setFilled(isSelected);
     }
 
+    // Extracts a point out of a mouse event
     private Point2D mouseEventToPoint(MouseEvent event) {
         return new Point2D(event.getX(), event.getY());
     }

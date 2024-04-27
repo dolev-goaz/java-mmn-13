@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-
+// Class that handles a paint GUI's logic.
 public class PaintLogic {
     private static final int INITIAL_STROKE_WIDTH = 2;
     private static final Color INITIAL_COLOR = Color.BLACK;
@@ -24,6 +24,7 @@ public class PaintLogic {
 
     private Point2D source, target; // mouse begin/end
 
+    // constructor
     public PaintLogic(Pane drawingPane) {
         this.drawingPane = drawingPane;
 
@@ -64,7 +65,7 @@ public class PaintLogic {
         beganDrawingShape = false;
     }
 
-    // clears the last shape from the pane
+    // Remove the last shape from the pane
     public void removeLastShape() {
         ObservableList<Node> shapes = drawingPane.getChildren();
         if (shapes.size() == 0) {
@@ -73,6 +74,7 @@ public class PaintLogic {
         shapes.remove(shapes.size() - 1);
     }
 
+    // Clear all shapes from the pane
     public void clear() {
         drawingPane.getChildren().clear();
     }
@@ -86,8 +88,31 @@ public class PaintLogic {
             return;
         }
 
-        setStyle(shape);
+        applyStyle(shape);
         drawingPane.getChildren().add(shape);
+    }
+
+    // sets color and stroke width
+    private void applyStyle(Shape shape) {
+        applyShapeColor(shape);
+        shape.setStrokeWidth(strokeWidth);
+    }
+
+    // sets the color of the shape, taking fill into account
+    private void applyShapeColor(Shape shape) {
+        // line is not effected by fill so it's always stroke
+        if (this.shape == PaneShape.LINE) {
+            shape.setStroke(this.color);
+            return;
+        }
+
+        if (isFilled) {
+            shape.setFill(this.color);
+            shape.setStroke(Color.TRANSPARENT);
+        } else {
+            shape.setFill(Color.TRANSPARENT);
+            shape.setStroke(this.color);
+        }
     }
 
     // clamps point to be inside the limits of the drawing pane
@@ -105,53 +130,37 @@ public class PaintLogic {
 
     // ---------------- setters/getters ----------------
 
-    // sets color and stroke width
-    private void setStyle(Shape shape) {
-        setColor(shape);
-        shape.setStrokeWidth(strokeWidth);
-    }
-
-    // sets the color of the shape, taking fill into account
-    private void setColor(Shape shape) {
-        // line is not effected by fill so it's always stroke
-        if (this.shape == PaneShape.LINE) {
-            shape.setStroke(this.color);
-            return;
-        }
-
-        if (isFilled) {
-            shape.setFill(this.color);
-            shape.setStroke(Color.TRANSPARENT);
-        } else {
-            shape.setFill(Color.TRANSPARENT);
-            shape.setStroke(this.color);
-        }
-    }
-
+    // Set stroke width
     public void setStrokeWidth(int width) {
         this.strokeWidth = width;
     }
 
+    // Set shape fill
     public void setFilled(boolean isFilled) {
         this.isFilled = isFilled;
     }
 
+    // Set shape color
     public void setColor(Color color) {
         this.color = color;
     }
 
+    // Set shape
     public void setShape(PaneShape shape) {
         this.shape = shape;
     }
 
+    // Get shape
     public PaneShape getShape() {
         return shape;
     }
 
+    // Get stroke width
     public int getStrokeWidth() {
         return strokeWidth;
     }
 
+    // Get shape color
     public Color getColor() {
         return color;
     }

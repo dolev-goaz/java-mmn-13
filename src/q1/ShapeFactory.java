@@ -6,6 +6,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
+// A factory class that creates shapes
 public class ShapeFactory {
 
     // Creates a shape using the provided shape type, source and target.
