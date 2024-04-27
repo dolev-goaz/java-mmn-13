@@ -3,6 +3,12 @@ package q2;
 public class FourInARow {
     private static final int EMPTY = -1;
     private static final int NO_WINNER = 0;
+    private static final Direction[] winDirections = {
+            new Direction(1, 0),
+            new Direction(0, 1),
+            new Direction(1, 1),
+            new Direction(1, -1)
+    };
     public static final int PLAYER_ONE = 1;
     public static final int PLAYER_TWO = 2;
     public static final int CONNECT_COUNT_WIN = 4; // amount of discs in a row
@@ -81,15 +87,18 @@ public class FourInARow {
 
     // returns the game status(draw, player1 win, player2 win, in progress)
     private GameStatus getGameStatus(int column, int row) {
-        int winner = this.getWinner(column, row);
-
-        if (winner == NO_WINNER) {
-            return this.isGameOverDraw()
-                    ? GameStatus.Draw
-                    : GameStatus.InProgress;
+        if (this.didPlayerWin(column, row)) {
+            return getWinnerGameStatus(board[column][row]);
         }
 
-        return winner == PLAYER_ONE
+        return this.isGameOverDraw()
+                ? GameStatus.Draw
+                : GameStatus.InProgress;
+
+    }
+
+    private GameStatus getWinnerGameStatus(int player) {
+        return player == PLAYER_ONE
                 ? GameStatus.PlayerOneWin
                 : GameStatus.PlayerTwoWin;
     }
@@ -110,60 +119,40 @@ public class FourInARow {
         return true;
     }
 
-    // returns the winner(a player that has CONNECT_COUNT_WIN discs in the same row/column/diagonal).
-    // if none is present, returns NO_WINNER.
-    private int getWinner(int playedColumn, int playedRow) {
-        int player = board[playedColumn][playedRow];
+    // Checks if the current play won(a player that has CONNECT_COUNT_WIN discs in the same row/column/diagonal).
+    private boolean didPlayerWin(int playedColumn, int playedRow) {
+        for (Direction direction: winDirections) {
+            int count = getConsecutiveCount(playedColumn, playedRow, direction)
+                    + getConsecutiveCount(playedColumn, playedRow, direction.reverse())
+                    - 1; // counting the initial point twice
+            if (count >= CONNECT_COUNT_WIN) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        // Check horizontally
-        int consecutiveCount = 1; // Count the consecutive pieces in a row
-        for (int col = playedColumn - 1; col >= 0 && board[col][playedRow] == player; col--) {
-            consecutiveCount++;
-        }
-        for (int col = playedColumn + 1; col < width && board[col][playedRow] == player; col++) {
-            consecutiveCount++;
-        }
-        if (consecutiveCount >= CONNECT_COUNT_WIN) {
-            return player; // Found a winner horizontally
-        }
+    // Counts the amount of consecutive discs of the current player in the provided direction
+    private int getConsecutiveCount(int playedCol, int playedRow, Direction dir) {
+        int player = this.board[playedCol][playedRow];
 
-        // Check vertically
-        consecutiveCount = 1; // Reset the count
-        for (int row = playedRow - 1; row >= 0 && board[playedColumn][row] == player; row--) {
-            consecutiveCount++;
-        }
-        for (int row = playedRow + 1; row < height && board[playedColumn][row] == player; row++) {
-            consecutiveCount++;
-        }
-        if (consecutiveCount >= CONNECT_COUNT_WIN) {
-            return player; // Found a winner vertically
+        int count = 1; // current position included
+        int currentCol = playedCol + dir.getX(); // next position
+        int currentRow = playedRow + dir.getY(); // next position
+
+        while (posInBounds(currentCol, currentRow) && (this.board[currentCol][currentRow] == player)) {
+            count++;
+            currentCol += dir.getX();
+            currentRow += dir.getY();
         }
 
-        // Check diagonally (top-left to bottom-right)
-        consecutiveCount = 1; // Reset the count
-        for (int offset = 1; playedColumn - offset >= 0 && playedRow - offset >= 0 && board[playedColumn - offset][playedRow - offset] == player; offset++) {
-            consecutiveCount++;
-        }
-        for (int offset = 1; playedColumn + offset < width && playedRow + offset < height && board[playedColumn + offset][playedRow + offset] == player; offset++) {
-            consecutiveCount++;
-        }
-        if (consecutiveCount >= CONNECT_COUNT_WIN) {
-            return player; // Found a winner diagonally (top-left to bottom-right)
-        }
+        return count;
+    }
 
-        // Check diagonally (top-right to bottom-left)
-        consecutiveCount = 1; // Reset the count
-        for (int offset = 1; playedColumn + offset < width && playedRow - offset >= 0 && board[playedColumn + offset][playedRow - offset] == player; offset++) {
-            consecutiveCount++;
-        }
-        for (int offset = 1; playedColumn - offset >= 0 && playedRow + offset < height && board[playedColumn - offset][playedRow + offset] == player; offset++) {
-            consecutiveCount++;
-        }
-        if (consecutiveCount >= CONNECT_COUNT_WIN) {
-            return player; // Found a winner diagonally (top-right to bottom-left)
-        }
-
-        return NO_WINNER; // No winner found
+    // checks if the provided position is within the bounds of the game
+    private boolean posInBounds(int col, int row) {
+        return (col >= 0 && col < width) &&
+                (row >= 0 && row < height);
     }
 
 }
