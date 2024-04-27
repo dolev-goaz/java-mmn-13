@@ -110,84 +110,60 @@ public class FourInARow {
         return true;
     }
 
-    // returns the winner(a player that has 4 discs in the same row/column/diagonal).
+    // returns the winner(a player that has CONNECT_COUNT_WIN discs in the same row/column/diagonal).
     // if none is present, returns NO_WINNER.
-    private int getWinner(int playedColumn, int playedRow) { // TODO: only check around played row/column
-        // check row
-        for (int col = 0; col <= width - CONNECT_COUNT_WIN; col++) {
-            for (int row = 0; row < height; row++) {
-                int player = board[col][row];
-                if (player == EMPTY) {
-                    continue;
-                }
-                boolean win = true;
-                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
-                    if (board[col + k][row] != player) {
-                        win = false;
-                        break;
-                    }
-                }
-                if (win) return player;
+    private int getWinner(int playedColumn, int playedRow) {
+        int player = board[playedColumn][playedRow];
 
-            }
+        // Check horizontally
+        int consecutiveCount = 1; // Count the consecutive pieces in a row
+        for (int col = playedColumn - 1; col >= 0 && board[col][playedRow] == player; col--) {
+            consecutiveCount++;
+        }
+        for (int col = playedColumn + 1; col < width && board[col][playedRow] == player; col++) {
+            consecutiveCount++;
+        }
+        if (consecutiveCount >= CONNECT_COUNT_WIN) {
+            return player; // Found a winner horizontally
         }
 
-        // check column
-        for (int col = 0; col < width; col++) {
-            for (int row = 0; row <= height - CONNECT_COUNT_WIN; row++) {
-                int player = board[col][row];
-                if (player == EMPTY) {
-                    continue;
-                }
-                boolean win = true;
-                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
-                    if (board[col][row + k] != player) {
-                        win = false;
-                        break;
-                    }
-                }
-                if (win) return player;
-            }
+        // Check vertically
+        consecutiveCount = 1; // Reset the count
+        for (int row = playedRow - 1; row >= 0 && board[playedColumn][row] == player; row--) {
+            consecutiveCount++;
+        }
+        for (int row = playedRow + 1; row < height && board[playedColumn][row] == player; row++) {
+            consecutiveCount++;
+        }
+        if (consecutiveCount >= CONNECT_COUNT_WIN) {
+            return player; // Found a winner vertically
         }
 
-        // check diagonal (top-left to bottom-right)
-        for (int col = 0; col <= width - CONNECT_COUNT_WIN; col++) {
-            for (int row = 0; row <= height - CONNECT_COUNT_WIN; row++) {
-                int player = board[col][row];
-                if (player == EMPTY) {
-                    continue;
-                }
-                boolean win = true;
-                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
-                    if (board[col + k][row + k] != player) {
-                        win = false;
-                        break;
-                    }
-                }
-                if (win) return player;
-            }
+        // Check diagonally (top-left to bottom-right)
+        consecutiveCount = 1; // Reset the count
+        for (int offset = 1; playedColumn - offset >= 0 && playedRow - offset >= 0 && board[playedColumn - offset][playedRow - offset] == player; offset++) {
+            consecutiveCount++;
+        }
+        for (int offset = 1; playedColumn + offset < width && playedRow + offset < height && board[playedColumn + offset][playedRow + offset] == player; offset++) {
+            consecutiveCount++;
+        }
+        if (consecutiveCount >= CONNECT_COUNT_WIN) {
+            return player; // Found a winner diagonally (top-left to bottom-right)
         }
 
-        // check diagonal (top-right to bottom-left)
-        for (int col = CONNECT_COUNT_WIN - 1; col < width; col++) {
-            for (int row = 0; row <= height - CONNECT_COUNT_WIN; row++) {
-                int player = board[col][row];
-                if (player == EMPTY) {
-                    continue;
-                }
-                boolean win = true;
-                for (int k = 1; k < CONNECT_COUNT_WIN; k++) {
-                    if (board[col - k][row + k] != player) {
-                        win = false;
-                        break;
-                    }
-                }
-                if (win) return player;
-            }
+        // Check diagonally (top-right to bottom-left)
+        consecutiveCount = 1; // Reset the count
+        for (int offset = 1; playedColumn + offset < width && playedRow - offset >= 0 && board[playedColumn + offset][playedRow - offset] == player; offset++) {
+            consecutiveCount++;
+        }
+        for (int offset = 1; playedColumn - offset >= 0 && playedRow + offset < height && board[playedColumn - offset][playedRow + offset] == player; offset++) {
+            consecutiveCount++;
+        }
+        if (consecutiveCount >= CONNECT_COUNT_WIN) {
+            return player; // Found a winner diagonally (top-right to bottom-left)
         }
 
-        // If none of the above conditions are met, it's a draw
-        return 0;
+        return NO_WINNER; // No winner found
     }
 
 }
