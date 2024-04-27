@@ -25,7 +25,7 @@ public class FourInARow {
     }
 
     // play a turn.
-    public int play(int columnIndex) throws FilledColumnException {
+    public TurnResults play(int columnIndex) throws FilledColumnException {
         // check column is in bounds
         if ((columnIndex < 0) || (columnIndex > this.width)) {
             // shouldn't happen in our setup
@@ -53,7 +53,7 @@ public class FourInARow {
         // play the disc
         column[playedRow] = this.getCurrentTurn();
         switchPlayer();
-        return playedRow;
+        return new TurnResults(getGameStatus(), playedRow);
     }
 
     // resets the game to its initial state
@@ -80,7 +80,7 @@ public class FourInARow {
     }
 
     // returns the game status(draw, player1 win, player2 win, in progress)
-    public GameStatus getGameStatus() {
+    private GameStatus getGameStatus() {
         if (this.isGameOverDraw()) {
             return GameStatus.Draw;
         }

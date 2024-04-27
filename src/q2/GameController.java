@@ -89,21 +89,20 @@ public class GameController {
     // Handles turn play
     private void onColumnPress(int columnIndex) {
         int currentTurn = this.game.getCurrentTurn();
-        int rowIndex;
+        TurnResults results;
         try {
-            rowIndex = this.game.play(columnIndex);
+            results = this.game.play(columnIndex);
         } catch (FilledColumnException e) {
             // column is already filled- shouldn't really happen since we disable the column
             return;
         }
 
-        rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left coordinates
+        int rowIndex = ROW_COUNT - 1 - results.getRowIndex(); // convert from top-left origin to bottom-left coordinates
         placeDisc(currentTurn, columnIndex, rowIndex);
 
         // check game over
-        GameStatus gameStatus = this.game.getGameStatus();
-        if (gameStatus != GameStatus.InProgress) {
-            handleGameOver(gameStatus);
+        if (results.getGameStatus() != GameStatus.InProgress) {
+            handleGameOver(results.getGameStatus());
             return;
         }
 
