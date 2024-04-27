@@ -83,20 +83,24 @@ public class FourInARow {
                 this.currentTurn == PLAYER_ONE
                         ? PLAYER_TWO
                         : PLAYER_ONE;
+        // could also do 3 - currentTurn
+        // which is basically PLAYER_ONE + PLAYER_TWO - currentTurn
+        // but i think this way is more readable
     }
 
     // returns the game status(draw, player1 win, player2 win, in progress)
-    private GameStatus getGameStatus(int column, int row) {
-        if (this.didPlayerWin(column, row)) {
-            return getWinnerGameStatus(board[column][row]);
+    private GameStatus getGameStatus(int playedColumn, int playedRow) {
+        if (this.didPlayerWin(playedColumn, playedRow)) {
+            return getWinnerGameStatus(board[playedColumn][playedRow]);
         }
 
-        return this.isGameOverDraw()
+        return this.isBoardFull()
                 ? GameStatus.Draw
                 : GameStatus.InProgress;
 
     }
 
+    // For the given player, returns the corresponding winning game status
     private GameStatus getWinnerGameStatus(int player) {
         return player == PLAYER_ONE
                 ? GameStatus.PlayerOneWin
@@ -108,8 +112,8 @@ public class FourInARow {
         return this.board[columnIndex][height-1] != EMPTY;
     }
 
-    // checks if the top row is filled(meaning the entire board is filled)
-    private boolean isGameOverDraw() {
+    // Checks if the entire board is full
+    private boolean isBoardFull() {
         for (int i = 0; i < this.width; i++) {
             if (!this.isColumnFilled(i)) {
                 // if the column isn't filled, then the game isn't over yet(there are empty slots)

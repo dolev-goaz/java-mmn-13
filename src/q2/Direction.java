@@ -1,5 +1,6 @@
 package q2;
 
+// a direction class, used for checking win conditions in Four in a Row
 public class Direction {
     private int x;
     private int y;
