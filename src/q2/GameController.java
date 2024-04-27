@@ -54,16 +54,18 @@ public class GameController {
         gameGrid.setMinHeight((ROW_COUNT + 1) * SQUARE_SIZE);
         gameGrid.setMinWidth(COLUMN_COUNT * SQUARE_SIZE);
 
+        // Set columns layout
         for (int i = 0; i < COLUMN_COUNT; i++) {
             ColumnConstraints constraints = new ColumnConstraints();
             constraints.setPercentWidth(100.0 / COLUMN_COUNT);
             constraints.setHalignment(HPos.CENTER);
             gameGrid.getColumnConstraints().add(constraints);
         }
-        // +1 for button row
+
+        // Set rows layout
         for (int i = 0; i < ROW_COUNT; i++) {
             RowConstraints row = new RowConstraints();
-            row.setPercentHeight(100.0 / (ROW_COUNT + 1));
+            row.setPercentHeight(100.0 / (ROW_COUNT + 1)); // +1 for button row
             row.setValignment(VPos.CENTER);
             gameGrid.getRowConstraints().add(row);
         }
@@ -72,30 +74,30 @@ public class GameController {
     // creates and adds the buttons to the grid. adds event listeners to handle their press.
     private void initializeButtons() {
         for (int i = 0; i < COLUMN_COUNT; i++) {
-            Button b = new Button((i+1) + "");
+            Button b = new Button(String.format("%d", i+1));
             b.setMaxWidth(Double.MAX_VALUE);
             b.setMaxHeight(Double.MAX_VALUE);
             gameGrid.add(b, i, ROW_COUNT);
-            b.setOnAction(event ->
-                    onButtonPress((Button)event.getTarget())
-            );
+            b.setOnAction(event -> {
+                Button target = (Button)event.getTarget();
+                int buttonTextNumeric = Integer.parseInt(target.getText());
+                onColumnPress(buttonTextNumeric - 1); // Columns are 0-indexed
+            });
         }
     }
 
-    // handles button press(play a turn)
-    private void onButtonPress(Button source) {
+    // Handles turn play
+    private void onColumnPress(int columnIndex) {
         int currentTurn = this.game.getCurrentTurn();
-
-        int columnIndex = Integer.parseInt(source.getText()) - 1;
         int rowIndex;
         try {
             rowIndex = this.game.play(columnIndex);
         } catch (FilledColumnException e) {
-            // column is already filled
+            // column is already filled- shouldn't really happen since we disable the column
             return;
         }
 
-        rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left
+        rowIndex = ROW_COUNT - 1 - rowIndex; // convert from top-left origin to bottom-left coordinates
         placeDisc(currentTurn, columnIndex, rowIndex);
 
         // check game over
