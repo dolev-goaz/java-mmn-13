@@ -53,7 +53,7 @@ public class FourInARow {
         // play the disc
         column[playedRow] = this.getCurrentTurn();
         switchPlayer();
-        return new TurnResults(getGameStatus(), playedRow);
+        return new TurnResults(getGameStatus(columnIndex, playedRow), playedRow);
     }
 
     // resets the game to its initial state
@@ -80,13 +80,13 @@ public class FourInARow {
     }
 
     // returns the game status(draw, player1 win, player2 win, in progress)
-    private GameStatus getGameStatus() {
-        if (this.isGameOverDraw()) {
-            return GameStatus.Draw;
-        }
-        int winner = this.getWinner();
+    private GameStatus getGameStatus(int column, int row) {
+        int winner = this.getWinner(column, row);
+
         if (winner == NO_WINNER) {
-            return GameStatus.InProgress;
+            return this.isGameOverDraw()
+                    ? GameStatus.Draw
+                    : GameStatus.InProgress;
         }
 
         return winner == PLAYER_ONE
@@ -112,7 +112,7 @@ public class FourInARow {
 
     // returns the winner(a player that has 4 discs in the same row/column/diagonal).
     // if none is present, returns NO_WINNER.
-    private int getWinner() {
+    private int getWinner(int playedColumn, int playedRow) { // TODO: only check around played row/column
         // check row
         for (int col = 0; col <= width - CONNECT_COUNT_WIN; col++) {
             for (int row = 0; row < height; row++) {
