@@ -12,17 +12,18 @@ import javafx.scene.shape.Shape;
 
 
 public class PaintLogic {
-    public static final int INITIAL_STROKE_WIDTH = 2;
-    public static final Color INITIAL_COLOR = Color.BLACK;
-    public static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE; // initial selected shape
+    private static final int INITIAL_STROKE_WIDTH = 2;
+    private static final Color INITIAL_COLOR = Color.BLACK;
+    private static final PaneShape INITIAL_SHAPE = PaneShape.RECTANGLE;
+
+    private final Pane drawingPane;
 
     private boolean isDragging;
     private boolean isFilled;
-    private final Pane drawingPane;
-    private PaneShape shape;
-    private int strokeWidth;
-    private Color color;
     private boolean beganDrawingShape;
+    private PaneShape shape;
+    private Color color;
+    private int strokeWidth;
 
     private Point2D source, target; // mouse begin/end
 
@@ -35,6 +36,131 @@ public class PaintLogic {
         strokeWidth = INITIAL_STROKE_WIDTH;
         shape = INITIAL_SHAPE;
         color = INITIAL_COLOR;
+    }
+
+    // Called at the start of a drawing event
+    public void beginShapeDrag(Point2D mousePos) {
+        isDragging = true;
+        source = clampPoint(mousePos);
+    }
+
+    // Called during a drawing event
+    public void onDrag(Point2D mousePos) {
+        if (!this.isDragging) {
+            return;
+        }
+        // we are relying on the fact that the shape was already created once, before deleting it.
+        // that is why we have this beganDrawingShape variable. so if we haven't already created the shape, we won't
+        // remove the last shape.
+        if (beganDrawingShape) {
+            removeLastShape();
+        } else {
+            beganDrawingShape = true;
+        }
+        target = clampPoint(mousePos);
+        drawShape();
+    }
+
+    // Called at the end of a drawing event- cleanup
+    public void onEndDrag() {
+        isDragging = false;
+        beganDrawingShape = false;
+    }
+
+    // clears the last shape from the pane
+    public void removeLastShape() {
+        ObservableList<Node> shapes = drawingPane.getChildren();
+        if (shapes.size() == 0) {
+            return;
+        }
+        shapes.remove(shapes.size() - 1);
+    }
+
+    public void clear() {
+        drawingPane.getChildren().clear();
+    }
+
+    // Draw the currently selected shape(using current arguments)
+    private void drawShape() {
+        Shape shape;
+        switch (this.shape) {
+            case RECTANGLE:
+                shape = createRectangle();
+                break;
+            case CIRCLE:
+                shape = createEllipse();
+                break;
+            case LINE:
+                shape = createLine();
+                break;
+            default:
+                return;
+        }
+
+        setStyle(shape);
+        drawingPane.getChildren().add(shape);
+    }
+
+    // Creates a rectangle using the stored data
+    private Rectangle createRectangle() {
+        double rectX = Math.min(source.getX(), target.getX());
+        double rectY = Math.min(source.getY(), target.getY());
+        double height = Math.abs(source.getY() - target.getY());
+        double width = Math.abs(source.getX() - target.getX());
+
+        return new Rectangle(rectX, rectY, width, height);
+    }
+
+    // creates an ellipse using the stored data
+    private Ellipse createEllipse() {
+        Point2D center = source.midpoint(target);
+        double rad1 = center.getX() - Math.min(source.getX(), target.getX());
+        double rad2 = center.getY() - Math.min(source.getY(), target.getY());
+
+        return new Ellipse(center.getX(), center.getY(), rad1, rad2);
+    }
+
+    // Creates a line using the stored data
+    private Line createLine() {
+        return new Line(source.getX(), source.getY(), target.getX(), target.getY());
+    }
+
+    // clamps point to be inside the limits of the drawing pane
+    private Point2D clampPoint(Point2D point) {
+        double drawOffset = this.strokeWidth / 2.0; // account for stroke width so it wont overflow
+        double newX = clamp(point.getX(), 0 + drawOffset, drawingPane.getWidth() - drawOffset);
+        double newY = clamp(point.getY(), 0 + drawOffset, drawingPane.getHeight() - drawOffset);
+        return new Point2D(newX, newY);
+    }
+
+    // clamps value to be between min and max
+    private double clamp(double val, double min, double max) {
+        return Math.max(min, Math.min(max, val));
+    }
+
+    // ---------------- setters/getters ----------------
+
+    // sets color and stroke width
+    private void setStyle(Shape shape) {
+        setColor(shape);
+        shape.setStrokeWidth(strokeWidth);
+    }
+
+    // sets the color of the shape, taking fill into account
+    private void setColor(Shape shape) {
+        // line is not effected by fill so it's always stroke
+        if (this.shape == PaneShape.LINE) {
+            shape.setStroke(this.color);
+            return;
+        }
+
+        if (isFilled) {
+            shape.setFill(this.color);
+            shape.setStroke(Color.TRANSPARENT);
+        } else {
+            shape.setFill(Color.TRANSPARENT);
+            shape.setStroke(this.color);
+        }
     }
 
     public void setStrokeWidth(int width) {
@@ -64,127 +190,4 @@ public class PaintLogic {
     public Color getColor() {
         return color;
     }
-
-    public void beginShapeDrag(Point2D mousePos) {
-        isDragging = true;
-        source = clampPoint(mousePos);
-    }
-
-    public void onDrag(Point2D mousePos) {
-        if (!this.isDragging) {
-            return;
-        }
-        // we are relying on the fact that the shape was already created once, before deleting it.
-        // that is why we have this beganDrawingShape variable. so if we haven't already created the shape, we won't
-        // remove the last shape.
-        if (beganDrawingShape) {
-            removeLastShape();
-        } else {
-            beganDrawingShape = true;
-        }
-        target = clampPoint(mousePos);
-        drawShape();
-    }
-
-    // event handler for when the user stopped dragging
-    public void onEndDrag() {
-        isDragging = false;
-        beganDrawingShape = false;
-    }
-
-    // draws a shape
-    private void drawShape() {
-        Shape shape;
-        switch (this.shape) {
-            case RECTANGLE:
-                shape = createRectangle();
-                break;
-            case CIRCLE:
-                shape = createEllipse();
-                break;
-            case LINE:
-                shape = createLine();
-                break;
-            default:
-                return;
-        }
-
-        setStyle(shape);
-        drawingPane.getChildren().add(shape);
-    }
-
-    // creates a rectangle using the stored data
-    private Rectangle createRectangle() {
-        double rectX = Math.min(source.getX(), target.getX());
-        double rectY = Math.min(source.getY(), target.getY());
-        double height = Math.abs(source.getY() - target.getY());
-        double width = Math.abs(source.getX() - target.getX());
-
-        return new Rectangle(rectX, rectY, width, height);
-    }
-
-    // creates an ellipse using the stored data
-    private Ellipse createEllipse() {
-        Point2D center = source.midpoint(target);
-        double rad1 = center.getX() - Math.min(source.getX(), target.getX());
-        double rad2 = center.getY() - Math.min(source.getY(), target.getY());
-
-        return new Ellipse(center.getX(), center.getY(), rad1, rad2);
-    }
-
-    // creates a line using the stored data
-    private Line createLine() {
-        return new Line(source.getX(), source.getY(), target.getX(), target.getY());
-    }
-
-    // sets color and stroke width
-    private void setStyle(Shape shape) {
-        setColor(shape);
-        shape.setStrokeWidth(strokeWidth);
-    }
-
-    // sets the color of the shape, taking fill into account
-    private void setColor(Shape shape) {
-        // line is not effected by fill so it's always stroke
-        if (this.shape == PaneShape.LINE) {
-            shape.setStroke(this.color);
-            return;
-        }
-
-        if (isFilled) {
-            shape.setFill(this.color);
-            shape.setStroke(Color.TRANSPARENT);
-        } else {
-            shape.setFill(Color.TRANSPARENT);
-            shape.setStroke(this.color);
-        }
-    }
-
-    // clamps point to be inside the limits of the drawing pane
-    private Point2D clampPoint(Point2D point) {
-        double drawOffset = this.strokeWidth / 2; // account for stroke width so it wont overflow
-        double newX = clamp(point.getX(), 0 + drawOffset, drawingPane.getWidth() - drawOffset);
-        double newY = clamp(point.getY(), 0 + drawOffset, drawingPane.getHeight() - drawOffset);
-        return new Point2D(newX, newY);
-    }
-
-    // clamps value to be between min and max
-    private double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
-    }
-
-
-    // clears the last shape from the pane
-    public void removeLastShape() {
-        ObservableList<Node> shapes = drawingPane.getChildren();
-        if (shapes.size() == 0) {
-            return;
-        }
-        shapes.remove(shapes.size() - 1);
-    }
-
-    public void clear() {
-        drawingPane.getChildren().clear();
-    }
-
 }
