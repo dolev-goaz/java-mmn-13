@@ -79,8 +79,10 @@ public class PaintLogic {
 
     // Draw the currently selected shape(using current arguments)
     private void drawShape() {
-        Shape shape = ShapeFactory.createShape(this.shape, source, target);
-        if (shape == null) {
+        Shape shape;
+        try {
+            shape = ShapeFactory.createShape(this.shape, source, target);
+        } catch (ShapeDoesNotExistException e) {
             return;
         }
 

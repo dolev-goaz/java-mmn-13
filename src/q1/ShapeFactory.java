@@ -8,7 +8,8 @@ import javafx.scene.shape.Shape;
 
 public class ShapeFactory {
 
-    public static Shape createShape(PaneShape shape, Point2D source, Point2D target) {
+    // Creates a shape using the provided shape type, source and target.
+    public static Shape createShape(PaneShape shape, Point2D source, Point2D target) throws ShapeDoesNotExistException {
         switch (shape) {
             case RECTANGLE:
                 return createRectangle(source, target);
@@ -17,8 +18,7 @@ public class ShapeFactory {
             case LINE:
                 return createLine(source, target);
         }
-        // NOTE: could add error message here
-        return null;
+        throw new ShapeDoesNotExistException(shape);
     }
 
     // Creates a rectangle using source and target points

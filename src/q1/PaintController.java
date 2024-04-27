@@ -60,8 +60,8 @@ public class PaintController {
 
     // initializes the radio group. listens to changes, and sets initial shape
     private void initializeShapes() {
-        // NOTE: ensure we set the user data of all radio buttons here
-        // this is so we won't rely on their text values
+        // NOTE: ensure we set the user data of all radio buttons here.
+        // This is so we won't rely on their text values
         circleRadioButton.setUserData(PaneShape.CIRCLE);
         lineRadioButton.setUserData(PaneShape.LINE);
         rectangleRadioButton.setUserData(PaneShape.RECTANGLE);
