@@ -2,12 +2,11 @@ package q2;
 
 public class FourInARow {
     private static final int EMPTY = -1;
-    private static final int NO_WINNER = 0;
     private static final Direction[] winDirections = {
-            new Direction(1, 0),
-            new Direction(0, 1),
-            new Direction(1, 1),
-            new Direction(1, -1)
+            new Direction(1, 0), // left -> right
+            new Direction(0, 1), // up -> down
+            new Direction(1, 1), // top-left -> bottom-right
+            new Direction(1, -1) // bottom-left -> top-right
     };
     public static final int PLAYER_ONE = 1;
     public static final int PLAYER_TWO = 2;
