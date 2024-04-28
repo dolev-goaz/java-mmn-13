@@ -15,12 +15,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GameController {
-    private static final int COLUMN_COUNT = 7;
-    private static final int ROW_COUNT = 6;
-    private static final int SQUARE_SIZE = 50;
-    private static final double DISC_RADIUS = SQUARE_SIZE / 2.25;
-    private static final double DISC_INNER_RADIUS = DISC_RADIUS - SQUARE_SIZE / 7.0;
-    private static final double SQUARE_CENTER = SQUARE_SIZE / 2.0;
+    private static final int GAME_COLUMN_COUNT = 7;
+    private static final int GAME_ROW_COUNT = 6;
+    // we separate grid/game row/col counts. makes the code easier to read logically
+    private static final int GRID_COLUMN_COUNT = GAME_COLUMN_COUNT;
+    private static final int GRID_ROW_COUNT = GAME_ROW_COUNT + 1; // extra row for buttons
+
+    // ------------------------ CUSTOMIZATION ------------------------
+    private static final int TILE_SIZE = 50;
+    private static final double DISC_RADIUS = TILE_SIZE / 2.25;
+    private static final double DISC_INNER_RADIUS = DISC_RADIUS - TILE_SIZE / 7.0;
+    private static final double TILE_CENTER = TILE_SIZE / 2.0;
+    // --------------------------- COLORS ---------------------------
     private static final Color PLAYER_ONE_COLOR = Color.CORNFLOWERBLUE;
     private static final Color PLAYER_TWO_COLOR = Color.MEDIUMVIOLETRED;
 
@@ -36,7 +42,7 @@ public class GameController {
     private Button clearButton;
 
     public void initialize() {
-        game = new FourInARow(COLUMN_COUNT, ROW_COUNT);
+        game = new FourInARow(GAME_COLUMN_COUNT, GAME_ROW_COUNT);
         initializeContainer();
         initializeGrid();
         initializeButtons();
@@ -44,28 +50,28 @@ public class GameController {
 
     // sets the width/height of the window
     private void initializeContainer() {
-        gameContainer.setPrefWidth(COLUMN_COUNT * SQUARE_SIZE);
-        gameContainer.setPrefHeight(clearButton.getPrefHeight() + (ROW_COUNT + 1) * SQUARE_SIZE);
+        gameContainer.setPrefWidth(GRID_COLUMN_COUNT * TILE_SIZE);
+        gameContainer.setPrefHeight(clearButton.getPrefHeight() + GRID_ROW_COUNT * TILE_SIZE);
     }
 
     // sets width/height of the grid, adds rows/columns to the grid.
     private void initializeGrid() {
         gameGrid.setGridLinesVisible(true);
-        gameGrid.setMinHeight((ROW_COUNT + 1) * SQUARE_SIZE);
-        gameGrid.setMinWidth(COLUMN_COUNT * SQUARE_SIZE);
+        gameGrid.setMinHeight(GRID_ROW_COUNT * TILE_SIZE);
+        gameGrid.setMinWidth(GRID_COLUMN_COUNT * TILE_SIZE);
 
         // Set columns layout
-        for (int i = 0; i < COLUMN_COUNT; i++) {
+        for (int i = 0; i < GRID_COLUMN_COUNT; i++) {
             ColumnConstraints constraints = new ColumnConstraints();
-            constraints.setPercentWidth(100.0 / COLUMN_COUNT);
+            constraints.setPercentWidth(100.0 / GRID_COLUMN_COUNT);
             constraints.setHalignment(HPos.CENTER);
             gameGrid.getColumnConstraints().add(constraints);
         }
 
         // Set rows layout
-        for (int i = 0; i < ROW_COUNT; i++) {
+        for (int i = 0; i < GRID_ROW_COUNT; i++) {
             RowConstraints row = new RowConstraints();
-            row.setPercentHeight(100.0 / (ROW_COUNT + 1)); // +1 for button row
+            row.setPercentHeight(100.0 / GRID_ROW_COUNT); // +1 for button row
             row.setValignment(VPos.CENTER);
             gameGrid.getRowConstraints().add(row);
         }
@@ -73,11 +79,11 @@ public class GameController {
 
     // creates and adds the buttons to the grid. adds event listeners to handle their press.
     private void initializeButtons() {
-        for (int i = 0; i < COLUMN_COUNT; i++) {
+        for (int i = 0; i < GAME_COLUMN_COUNT; i++) {
             Button b = new Button(String.format("%d", i+1));
             b.setMaxWidth(Double.MAX_VALUE);
             b.setMaxHeight(Double.MAX_VALUE);
-            gameGrid.add(b, i, ROW_COUNT);
+            gameGrid.add(b, i, GAME_ROW_COUNT);
             b.setOnAction(event -> {
                 Button target = (Button)event.getTarget();
                 int buttonTextNumeric = Integer.parseInt(target.getText());
@@ -97,7 +103,7 @@ public class GameController {
             return;
         }
 
-        int rowIndex = ROW_COUNT - 1 - results.getRowIndex(); // convert from top-left origin to bottom-left coordinates
+        int rowIndex = GAME_ROW_COUNT - 1 - results.getRowIndex(); // convert from top-left origin to bottom-left coordinates
         placeDisc(currentTurn, columnIndex, rowIndex);
 
         // check game over
@@ -121,10 +127,10 @@ public class GameController {
                         : PLAYER_TWO_COLOR;
 
         // outer circle(the border, basically)
-        Circle circle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_RADIUS, currentColor);
+        Circle circle = new Circle(TILE_CENTER, TILE_CENTER, DISC_RADIUS, currentColor);
         this.gameGrid.add(circle, colIndex, rowIndex);
         // inner circle
-        Circle innerCircle = new Circle(SQUARE_CENTER, SQUARE_CENTER, DISC_INNER_RADIUS, currentColor.brighter());
+        Circle innerCircle = new Circle(TILE_CENTER, TILE_CENTER, DISC_INNER_RADIUS, currentColor.brighter());
         this.gameGrid.add(innerCircle, colIndex, rowIndex);
     }
 
