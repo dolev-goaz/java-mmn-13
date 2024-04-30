@@ -103,8 +103,7 @@ public class GameController {
             return;
         }
 
-        int rowIndex = GAME_ROW_COUNT - 1 - results.getRowIndex(); // convert from top-left origin to bottom-left coordinates
-        placeDisc(currentTurn, columnIndex, rowIndex);
+        placeDisc(currentTurn, columnIndex, results.getRowIndex());
 
         // check game over
         if (results.getGameStatus() != GameStatus.InProgress) {

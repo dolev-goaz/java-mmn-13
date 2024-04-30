@@ -48,7 +48,7 @@ public class FourInARow {
         // an assignment for the compiler, no real need to assign here since the loop would always find the appropriate row
         // get the row that the disc will land in.
         int playedRow = -1;
-        for (int i = 0; i < this.height; i++) {
+        for (int i = this.height - 1; i >= 0; i--) {
             if (column[i] == EMPTY) {
                 playedRow = i;
                 break;
@@ -108,7 +108,7 @@ public class FourInARow {
 
     // checks whether a provided column is filled
     public boolean isColumnFilled(int columnIndex) {
-        return this.board[columnIndex][height-1] != EMPTY;
+        return this.board[columnIndex][0] != EMPTY;
     }
 
     // Checks if the entire board is full
