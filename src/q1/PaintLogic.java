@@ -85,6 +85,8 @@ public class PaintLogic {
         try {
             shape = ShapeFactory.createShape(this.shape, source, target);
         } catch (ShapeDoesNotExistException e) {
+            System.err.println(e.getMessage()); // print to the console if a shape was not implemented
+            // in an actual application, would probably be better to have an assert statement inside 'createShape'
             return;
         }
 
