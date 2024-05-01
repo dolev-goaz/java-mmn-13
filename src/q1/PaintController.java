@@ -85,11 +85,14 @@ public class PaintController {
             case LINE:
                 lineRadioButton.fire();
                 break;
-            case CIRCLE:
+            case ELLIPSE:
                 ellipseRadioButton.fire();
                 break;
             case RECTANGLE:
                 rectangleRadioButton.fire();
+                break;
+            case CIRCLE:
+                circleRadioButton.fire();
                 break;
         }
 
