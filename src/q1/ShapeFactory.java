@@ -14,7 +14,7 @@ public class ShapeFactory {
         switch (shape) {
             case RECTANGLE:
                 return createRectangle(source, target);
-            case CIRCLE:
+            case ELLIPSE:
                 return createEllipse(source, target);
             case LINE:
                 return createLine(source, target);

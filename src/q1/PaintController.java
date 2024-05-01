@@ -14,6 +14,9 @@ public class PaintController {
     private Pane drawingPane;
 
     @FXML
+    private RadioButton ellipseRadioButton;
+
+    @FXML
     private RadioButton circleRadioButton;
 
     @FXML
@@ -64,6 +67,7 @@ public class PaintController {
     private void initializeShapes() {
         // NOTE: ensure we set the user data of all radio buttons here.
         // This is so we won't rely on their text values
+        ellipseRadioButton.setUserData(PaneShape.ELLIPSE);
         circleRadioButton.setUserData(PaneShape.CIRCLE);
         lineRadioButton.setUserData(PaneShape.LINE);
         rectangleRadioButton.setUserData(PaneShape.RECTANGLE);
@@ -82,7 +86,7 @@ public class PaintController {
                 lineRadioButton.fire();
                 break;
             case CIRCLE:
-                circleRadioButton.fire();
+                ellipseRadioButton.fire();
                 break;
             case RECTANGLE:
                 rectangleRadioButton.fire();

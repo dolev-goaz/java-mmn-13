@@ -30,12 +30,13 @@
             <RowConstraints maxHeight="229.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <RadioButton fx:id="lineRadioButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Line" GridPane.rowIndex="1">
+            <RadioButton fx:id="lineRadioButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Line">
                <toggleGroup>
                   <ToggleGroup fx:id="shapeToggleGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="circleRadioButton" mnemonicParsing="false" prefHeight="95.0" prefWidth="164.0" text="Circle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="2" />
+            <RadioButton fx:id="circleRadioButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Circle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="1" />
+            <RadioButton fx:id="ellipseRadioButton" mnemonicParsing="false" prefHeight="95.0" prefWidth="164.0" text="Ellipse" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="2" />
             <RadioButton fx:id="rectangleRadioButton" mnemonicParsing="false" prefHeight="79.0" prefWidth="113.0" text="Rectangle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="3" />
             <Button mnemonicParsing="false" onAction="#onUndoShape" prefHeight="90.0" prefWidth="105.0" text="UNDO" GridPane.rowIndex="5" />
             <Button mnemonicParsing="false" onAction="#onClear" prefHeight="40.0" prefWidth="102.0" text="CLEAR" GridPane.rowIndex="6" />
