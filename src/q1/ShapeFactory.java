@@ -1,10 +1,7 @@
 package q1;
 
 import javafx.geometry.Point2D;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 
 // A factory class that creates shapes
 public class ShapeFactory {
@@ -16,6 +13,8 @@ public class ShapeFactory {
                 return createRectangle(source, target);
             case ELLIPSE:
                 return createEllipse(source, target);
+            case CIRCLE:
+                return createCircle(source, target);
             case LINE:
                 return createLine(source, target);
         }
@@ -40,6 +39,24 @@ public class ShapeFactory {
 
         return new Ellipse(center.getX(), center.getY(), rad1, rad2);
     }
+
+    // creates a circle using source and target points
+    private static Circle createCircle(Point2D source, Point2D target) {
+        // calculate min distance(vertical/horizontal) between points
+        double dy = target.getY() - source.getY();
+        double dx = target.getX() - source.getX();
+
+        // since we want a perfect circle, we make it so the diameter of the drawn circle will be the minimum of the
+        // distances- constant radius for both width and height
+        double diameter = Math.min(Math.abs(dx), Math.abs(dy));
+
+        Point2D newTarget = source.add(diameter * Math.signum(dx), diameter * Math.signum(dy));
+        // using sign method to maintain the direction of the circle
+        Point2D center = source.midpoint(newTarget);
+
+        return new Circle(center.getX(), center.getY(), diameter / 2);
+    }
+
 
     // Creates a line using source and target points
     private static Line createLine(Point2D source, Point2D target) {
