@@ -16,28 +16,11 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="q1.PaintController">
    <left>
-      <GridPane prefWidth="100.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="leftContainer" prefWidth="100.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
-        <rowConstraints>
-            <RowConstraints maxHeight="147.0" minHeight="10.0" prefHeight="53.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="150.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="147.0" minHeight="0.0" prefHeight="57.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="229.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="229.0" minHeight="10.0" prefHeight="61.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="229.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="229.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-        </rowConstraints>
          <children>
-            <RadioButton fx:id="lineRadioButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Line">
-               <toggleGroup>
-                  <ToggleGroup fx:id="shapeToggleGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="circleRadioButton" mnemonicParsing="false" prefHeight="58.0" prefWidth="120.0" text="Circle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="1" />
-            <RadioButton fx:id="ellipseRadioButton" mnemonicParsing="false" prefHeight="95.0" prefWidth="164.0" text="Ellipse" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="2" />
-            <RadioButton fx:id="rectangleRadioButton" mnemonicParsing="false" prefHeight="79.0" prefWidth="113.0" text="Rectangle" toggleGroup="$shapeToggleGroup" GridPane.rowIndex="3" />
             <Button mnemonicParsing="false" onAction="#onUndoShape" prefHeight="90.0" prefWidth="105.0" text="UNDO" GridPane.rowIndex="5" />
             <Button mnemonicParsing="false" onAction="#onClear" prefHeight="40.0" prefWidth="102.0" text="CLEAR" GridPane.rowIndex="6" />
             <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="TOP">

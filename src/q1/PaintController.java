@@ -3,9 +3,12 @@ package q1;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+
+import java.util.Optional;
 
 // A controller the paint application
 public class PaintController {
@@ -14,33 +17,34 @@ public class PaintController {
     private Pane drawingPane;
 
     @FXML
-    private RadioButton ellipseRadioButton;
-
-    @FXML
-    private RadioButton circleRadioButton;
-
-    @FXML
-    private RadioButton lineRadioButton;
-
-    @FXML
-    private RadioButton rectangleRadioButton;
-
-    @FXML
-    private ToggleGroup shapeToggleGroup;
-
-    @FXML
     private ColorPicker colorInput;
 
     @FXML
     private Slider strokeWidthSlider;
 
+    @FXML
+    GridPane leftContainer;
+
     private PaintLogic logic;
+    private static final int CONTROLS_COUNT_LEFT = PaneShape.values().length + 3; // 3 for undo/clear buttons+stroke width
 
     // Paint setup
     public void initialize() {
         logic = new PaintLogic(this.drawingPane);
-        initializeShapes();
         initializeColorInput();
+        initializeLeftPanel();
+    }
+
+    private void initializeLeftPanel() {
+        // Set columns layout
+        for (int i = 0; i < CONTROLS_COUNT_LEFT; i++) {
+            RowConstraints constraints = new RowConstraints();
+            constraints.setPercentHeight(100.0 / CONTROLS_COUNT_LEFT);
+            constraints.setValignment(VPos.CENTER);
+            leftContainer.getRowConstraints().add(constraints);
+        }
+
+        initializeShapes();
         initializeStrokeWidthInput();
     }
 
@@ -65,37 +69,33 @@ public class PaintController {
 
     // initializes the radio group. listens to changes, and sets initial shape
     private void initializeShapes() {
-        // NOTE: ensure we set the user data of all radio buttons here.
-        // This is so we won't rely on their text values
-        ellipseRadioButton.setUserData(PaneShape.ELLIPSE);
-        circleRadioButton.setUserData(PaneShape.CIRCLE);
-        lineRadioButton.setUserData(PaneShape.LINE);
-        rectangleRadioButton.setUserData(PaneShape.RECTANGLE);
+        ToggleGroup toggleGroup = new ToggleGroup();
+        int i = 0;
+        for (PaneShape shape : PaneShape.values()) {
+            RadioButton button = new RadioButton();
+            button.setText(shape.name());
+            button.setUserData(shape);
+            button.setToggleGroup(toggleGroup);
+
+            leftContainer.add(button, 0, i);
+            i++;
+        }
 
         // event handler to store the selected shape
-        shapeToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 return;
             }
-            logic.setShape((PaneShape)newValue.getUserData());
+            logic.setShape((PaneShape) newValue.getUserData());
         });
 
         // trigger the initial radio button
-        switch (logic.getShape()){
-            case LINE:
-                lineRadioButton.fire();
-                break;
-            case ELLIPSE:
-                ellipseRadioButton.fire();
-                break;
-            case RECTANGLE:
-                rectangleRadioButton.fire();
-                break;
-            case CIRCLE:
-                circleRadioButton.fire();
-                break;
-        }
-
+        Optional<Toggle> initialRadio = toggleGroup
+                .getToggles()
+                .stream()
+                .filter(toggle -> toggle.getUserData() == logic.getShape())
+                .findFirst();
+        initialRadio.ifPresent(radio -> ((RadioButton) radio).fire());
     }
 
     // ---------------- events ----------------
